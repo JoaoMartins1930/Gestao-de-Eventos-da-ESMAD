@@ -1,0 +1,124 @@
+package com.horizon.view;
+
+import java.awt.EventQueue;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import com.horizon.model.User;
+
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+
+public class login extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField txtNovoUser;
+	private JTextField txtUser;
+	private static ArrayList<User> users = new ArrayList<User>();
+	private JPasswordField passwordField;
+	private JPasswordField passwordField_1;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					login frame = new login();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public login() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 156, 243);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		txtNovoUser = new JTextField();
+		txtNovoUser.setBounds(39, 11, 86, 20);
+		contentPane.add(txtNovoUser);
+		txtNovoUser.setColumns(10);
+		
+		JLabel lblUser = new JLabel("user");
+		lblUser.setBounds(10, 14, 46, 14);
+		contentPane.add(lblUser);
+		
+		JLabel lblPass = new JLabel("pass");
+		lblPass.setBounds(10, 45, 29, 14);
+		contentPane.add(lblPass);
+		
+		JButton btnNovoUser = new JButton("novo user");
+		btnNovoUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				User novoUser = new User(1, 1, txtNovoUser.getText(), txtNovoPass.getText());
+				users.add(novoUser);
+			}			
+		});
+		btnNovoUser.setBounds(10, 73, 115, 23);
+		contentPane.add(btnNovoUser);
+		
+		txtUser = new JTextField();
+		txtUser.setColumns(10);
+		txtUser.setBounds(39, 107, 86, 20);
+		contentPane.add(txtUser);
+		
+		JLabel label = new JLabel("user");
+		label.setBounds(10, 110, 46, 14);
+		contentPane.add(label);
+		
+		JLabel label_1 = new JLabel("pass");
+		label_1.setBounds(10, 141, 29, 14);
+		contentPane.add(label_1);
+		
+		JButton btnLogin = new JButton("login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean encontra = false;
+				for (User user : users) {
+					if (user.getNome().equals(txtUser.getText()) && user.getPassord().equals(txtPass.getText())){
+						encontra = true;
+						JOptionPane.showMessageDialog(contentPane, "sucesso");
+					}
+					
+					if (!encontra)
+						JOptionPane.showMessageDialog(contentPane, "nop");
+						
+					
+				}
+			}
+		});
+		btnLogin.setBounds(10, 169, 115, 23);
+		contentPane.add(btnLogin);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(39, 42, 86, 20);
+		contentPane.add(passwordField);
+		
+		passwordField_1 = new JPasswordField();
+		passwordField_1.setBounds(39, 138, 86, 20);
+		contentPane.add(passwordField_1);
+	}
+}

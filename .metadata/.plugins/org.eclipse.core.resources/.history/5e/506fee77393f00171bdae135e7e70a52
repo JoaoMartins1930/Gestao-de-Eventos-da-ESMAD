@@ -1,0 +1,61 @@
+package com.horizon.model;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Gestao {
+	private final String FICHEIRO_USERS = "Users.txt";
+	private int userCount;
+	
+	
+	
+	/**
+	 * Método para gravar todos os users num ArrayList do tipo User para o ficheiro Users.txt
+	 * @param users	ArrayList do tipo User a gravar
+	 * @throws FileNotFoundException
+	 */
+	public void gravarUsers(ArrayList<User> users) throws FileNotFoundException {
+		File file = new File(FICHEIRO_USERS);
+		PrintWriter out = new PrintWriter(file);
+		
+		for (User user : users) {
+			out.println(user.getId() + "#" + user.getNivel() + "#" + user.getNome() + "#" + user.getPassword());
+		}
+		System.out.println("ficheiro editado");
+		out.close();
+	}
+	
+	
+	
+	/**
+	 * Método para carregar todos os users em Users.txt para uma colecção ArrayList
+	 * @return ArrayList<User> com todos os users em User.txt
+	 * @throws FileNotFoundException 
+	 */
+	public ArrayList<User> carregarUsers() throws FileNotFoundException{
+		ArrayList<User> users = new ArrayList<User>();
+		File file = new File(FICHEIRO_USERS);
+		Scanner in = new Scanner(file);
+		String[] linha;
+		
+		while (in.hasNextLine()) {
+			linha = in.nextLine().split("#");
+			User novoUser = new User(Integer.parseInt(linha[0]), Integer.parseInt(linha[1]), linha[2], linha[3]);
+			users.add(novoUser);			
+		}
+		in.close();
+		userCount = users.size();
+		return users;
+	}
+	
+	public User adicionarUser(String nivel, String nome, String Password){
+		User novoUser = new User(userCount, Integer.parseInt(nivel), nome, Password);
+		userCount++;
+		return novoUser;
+		
+	}
+	
+}

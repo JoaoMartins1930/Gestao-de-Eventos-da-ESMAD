@@ -1,0 +1,500 @@
+package com.horizon.model;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+
+public class Gestao {
+	private final String FICHEIRO_USERS = "Users.txt";
+	private final String FICHEIRO_TIPOS = "Tipologias.txt";
+	private final String FICHEIRO_DEPAR = "Departamentos.txt";
+	private final String FICHEIRO_EVENT = "Eventos.txt";
+	private final String FICHEIRO_INSCR = "Inscritos.txt";
+	
+	private ArrayList<Tipologia> tipologias = new ArrayList<Tipologia>();
+	private ArrayList<User> users = new ArrayList<User>();
+	private ArrayList<Departamento> departamentos = new ArrayList<Departamento>();
+	private ArrayList<Evento> eventos = new ArrayList<Evento>();
+	private ArrayList<Inscrito> inscritos = new ArrayList<Inscrito>();
+	
+	//GET do array list users
+	public ArrayList<User> getUsers(){
+		return users;
+	}
+	
+	
+	//CENAS PARA CADA UM----------------------------------
+	//novo item
+	//eliminar item
+	//carregar items
+	//gravar items
+	//alterar items (varia para cada um)
+	
+	//String nome, String data, String hora, String sala, String dataLimite, boolean pago, Tipologia tipo, Departamento depart, int valor
+	
+	//EVENTOS---------------------------------------------
+	public void guardarEventos () throws FileNotFoundException{
+		File file = new File(FICHEIRO_EVENT);
+		PrintWriter out = new PrintWriter(file);
+		
+		
+		for (Evento evento : eventos) {
+			out.println(evento.getCodigo() + "#" +
+						evento.getTipoCodigo() + "#" +
+						evento.getDepartCodigo() + "#" +
+						evento.getValor() + "#" +
+						evento.getNome() + "#" +
+						evento.getData() + "#" +
+						evento.getHora() + "#" +
+						evento.getSala() + "#" +
+						evento.getDataLimite() + "#" +
+						evento.isPago());
+		}
+		out.close();
+		System.out.println("Eventos gravados");
+	}
+	
+	
+	//----------------------------------------------------
+	
+	
+	//INSCRITOS-------------------------------------------
+	//TODO
+	//alterar cenas (nome, evento)
+	
+	
+	/**
+	 * Método para gravar inscritos em ficheiro.
+	 * @throws FileNotFoundException
+	 */
+	public void gravarInscritos() throws FileNotFoundException{
+		File file = new File(FICHEIRO_INSCR);
+		PrintWriter out = new PrintWriter(file);
+		
+		for (Inscrito inscrito : inscritos) {
+			out.println(inscrito.getCodigo() + "#" +  inscrito.getNome() + "#" + inscrito.getEventoCodigo() +"#" + inscrito.getPago());
+		}
+		
+		out.close();
+		System.out.println("Inscritos gravados");
+	}
+	
+	
+	/**
+	 * Método para carregar Inscritos do ficheiro.
+	 * @throws FileNotFoundException
+	 */
+	public void carregarInscritos() throws FileNotFoundException{
+		File file = new File(FICHEIRO_INSCR);
+		Scanner in = new Scanner(file);
+		String[] linha;
+		Inscrito novoInscrito = null;
+		Evento eventoRelated = null;
+		
+		while (in.hasNextLine()){
+			linha  = in.nextLine().split("#");
+			
+			//ir buscar o evento ao qual este inscrito tá associado
+			for (Evento evento : eventos) {
+				if (evento.getCodigo() == Integer.parseInt(linha[2]))
+				eventoRelated = evento;
+			}
+			
+			novoInscrito = new Inscrito(Integer.parseInt(linha[0]), linha[1], eventoRelated, linha[3]);
+			inscritos.add(novoInscrito);
+		}
+		
+		in.close();
+		System.out.println("Inscritos carregados");
+	}
+	
+	
+	/**
+	 * Método para criar novo inscrito. 
+	 * @param nome Nome do inscrito.
+	 * @param evento Objecto Evento em que o inscrito está inscrito
+	 * @param pago Se o inscrito pagou, não, ou se não se aplica.
+	 */
+	public void adicionarInscrito(String nome, Evento evento, String pago){
+		Inscrito novoInscrito = new Inscrito(inscritos.get(inscritos.size()-1).getCodigo() + 1, nome, evento, pago);
+		inscritos.add(novoInscrito);
+		System.out.println("Inscrito " + nome + " adicionado");
+	}
+	
+	
+	/**
+	 * Método para criar novo inscrito que aceita nome do evento em vez de um objecto Evento.
+	 * @param nome Nome do inscrito.
+	 * @param evento Nome do evento em que o inscrito está inscrito.
+	 * @param pago Se o inscrito pagou, não, ou se não se aplica.
+	 */
+	public void adicionarInscrito(String nome, String evento, String pago){
+		
+		//encontrar evento com o mesmo nome do recebido e atribuir-lo
+		Evento ev = null;
+		for (Evento evento2 : eventos ) {
+			if (evento2.getNome().equals(nome))
+				ev = evento2;
+		}
+		
+		Inscrito novoInscrito = new Inscrito(inscritos.get(inscritos.size()-1).getCodigo() + 1, nome, ev, pago);
+		inscritos.add(novoInscrito);
+		System.out.println("Inscrito " + nome + " adicionado");
+	}
+	
+	/**
+	 * Método para eliminar um específico inscrito.
+	 * @param nome Nome do inscrito a eliminar.
+	 */
+	public void eliminarInscrito(String nome) {
+		for (Inscrito inscrito : inscritos) {
+			if (inscrito.getNome().equals(nome))
+				inscritos.remove(inscrito);
+		}
+	}
+	
+	
+	/**
+	 * Método para eliminar todos os inscritos num dado evento.
+	 * @param nome Nome do evento cujos inscritos se quer eliminar.
+	 */
+	public void eliminarInscritosPorEvento(String nome){
+		for (Inscrito inscrito : inscritos) {
+			if (inscrito.GetEventoNome().equals(nome))
+				inscritos.remove(inscrito);
+			
+		}
+	}
+	
+	
+	
+	/**
+	 * Método para alterar o estado de pago de um dado inscrito.
+	 * @param nome Nome do inscrito a alterar.
+	 * @param pago Estado de pago com que o inscrito dever ficar.
+	 */
+	public void alterarPago(String nome, String pago){
+		for (Inscrito inscrito : inscritos) {
+			if (inscrito.getNome().equals(nome))
+				inscrito.setPago(pago);
+		}
+	}
+	
+	/**
+	 * Método para alrerar o evento de um dado inscrito.
+	 * @param nome	Nome do inscrito a alterar.
+	 * @param evento Evento com o qual o inscrito deve ficar.
+	 */
+	public void alterarEvento(String nome, Evento evento){
+		for (Inscrito inscrito : inscritos) {
+			if (inscrito.getNome().equals(nome))
+				inscrito.setEvento(evento);
+		}
+	}
+	
+	public void alterarEvento(String nome, String evento){ //Deve haver melhor maneira de fazer isto...
+		Evento ev = null;
+		
+		for (Evento evento2 : eventos) {
+			if (evento2.getNome().equals(evento))
+				ev=evento2;
+		}
+		
+		for (Inscrito inscrito : inscritos) {
+			if (inscrito.getNome().equals(nome))
+				inscrito.setEvento(ev);
+		}
+		
+	}
+	
+	
+	//----------------------------------------------------
+	
+	//TIPOLOGIAS------------------------------------------
+	//TODO
+	
+	
+	/**
+	 * Método para carregar todas as tipologias para memória;
+	 * @throws FileNotFoundException
+	 */
+	public void carregarTipos() throws FileNotFoundException{
+		File file = new File(FICHEIRO_TIPOS);
+		Scanner in = new Scanner(file);
+		String[] linha;
+		Tipologia tipo = null;
+		while (in.hasNextLine()){
+			linha = in.nextLine().split("#");
+			tipo = new Tipologia(Integer.parseInt(linha[0]), linha[1]);
+			tipologias.add(tipo);
+		}
+		
+		in.close();
+		System.out.println("Tipologias carregadas");
+	}
+	
+	/**
+	 * Método para gravar tipologias em ficheiro.
+	 * @throws FileNotFoundException
+	 */
+	public void gravarTipologias() throws FileNotFoundException {
+		File file = new File(FICHEIRO_TIPOS);
+		PrintWriter out = new PrintWriter(file);
+		
+		for (Tipologia tipologia : tipologias) {
+			out.println(tipologia.getCodigo() + "#" + tipologia.getNome());
+		}
+		out.close();
+		System.out.println("Tipologias gravadas");
+	}
+	
+	/**
+	 * Método para adicionar uma tipologia. 
+	 * @param nome Nome da nova tipologia.
+	 */
+	public void adicionarTipologia(String nome){
+		Tipologia novaTipologia = new Tipologia (tipologias.get(tipologias.size()-1).getCodigo()+1, nome);
+		tipologias.add(novaTipologia);
+		System.out.println("Tipologia adicionada");
+	}
+	
+	
+	/**
+	 * Método para alterar o nome de uma tipologia.
+	 * @param nome	Nome da tipologia a alterar.
+	 * @param nome2 Nome com o qual a tipologia dever ficar.
+	 */
+	public void alterarTipologia(String nome, String nome2){
+		for (Tipologia tipologia : tipologias) {
+			if (tipologia.getNome().equals(nome))
+				tipologia.setNome(nome2);
+		}
+	System.out.println("Nome de " + nome + " alterado para " + nome2);
+	}
+	
+	
+	/**
+	 * Método para remover uma dada Tipologia.
+	 * @param nome Nome da tipologia a eliminar.
+	 */
+	public void eliminarTipologia(String nome){
+		for (Tipologia tipologia : tipologias) {
+			if (tipologia.getNome().equals(nome))
+				tipologias.remove(tipologia);
+		}
+	System.out.println("Tipologia " + nome + " removida");
+	}
+	
+	
+	//----------------------------------------------------
+	
+	//DEPARTAMENTOS---------------------------------------
+	//TODO
+	
+	/**
+	 * Método para graver departamentos.
+	 * @throws FileNotFoundException
+	 */
+	public void gravarDepartamentos() throws FileNotFoundException{
+		File file = new File(FICHEIRO_DEPAR);
+		PrintWriter out = new PrintWriter(file);
+		
+		for (Departamento departamento : departamentos) {
+			out.println(departamento.getCodigo() + "#" + departamento.getNome());
+		}
+		
+		out.close();
+		System.out.println("Departamentos gravados");
+	}
+	
+	/**
+	 * Método para carregar departamentos.
+	 * @throws FileNotFoundException
+	 */
+	public void carregarDepartamentos() throws FileNotFoundException{
+		File file = new File(FICHEIRO_DEPAR);
+		Scanner in = new Scanner(file);
+		String[] linha;
+		Departamento depart = null;
+		
+		while (in.hasNextLine()){
+			linha = in.nextLine().split("#");
+			depart = new Departamento(Integer.parseInt(linha[0]), linha[1]);
+			departamentos.add(depart);
+		}
+		
+		in.close();
+		System.out.println("Departamentos carregados");
+	}
+	
+	/**
+	 * Método para adicionar um novo departamento.
+	 * @param nome Nome do departamento a adicionar.
+	 */
+	public void novoDepartamento(String nome){
+		Departamento depart = new Departamento(departamentos.get(departamentos.size()-1).getCodigo(), nome);
+		departamentos.add(depart);
+		System.out.println("Departamento " + nome + " adicionado");
+	}
+	
+	
+	/**
+	 * Método para remover um departamento.
+	 * @param nome Nome do departamento a eliminar.
+	 */
+	public void eliminarDepartamento(String nome){
+		for (Departamento depart : departamentos) {
+			if(depart.getNome().equals(nome))
+				departamentos.remove(depart);
+		}
+	System.out.println("Departamento " + nome + " removido");
+	}
+	
+	/**
+	 * Método para alterar o nome de um departamento
+	 * @param nome Nome do departamento a alterar
+	 * @param nome2 Nome com o qual o departamento deve ficar
+	 */
+	public void alterarDepartamento(String nome, String nome2){
+		for (Departamento depart : departamentos) {
+			if(depart.getNome().equals(nome))
+				depart.setNome(nome2);
+		}
+	}
+	
+	//----------------------------------------------------
+	
+	//USERS-----------------------------------------------
+	//TODO
+	//???
+	
+	/**
+	 * Método para gravar todos os users num ArrayList do tipo User para o ficheiro Users.txt
+	 * @param users	ArrayList do tipo User a gravar
+	 * @throws FileNotFoundException
+	 */
+//	public void gravarUsers(ArrayList<User> users) throws FileNotFoundException {
+//		File file = new File(FICHEIRO_USERS);
+//		PrintWriter out = new PrintWriter(file);
+//		
+//		for (User user : users) {
+//			out.println(user.getId() + "#" + user.getNivel() + "#" + user.getNome() + "#" + user.getPassword());
+//		}
+//		System.out.println("Users gravados");
+//		out.close();
+//	}
+	
+	public void gravarUsers() throws FileNotFoundException{
+		File file = new File(FICHEIRO_USERS);
+		PrintWriter out = new PrintWriter(file);
+		
+		for (User user: users) {
+			out.println(user.getId() + "#" + user.getNivel() + "#" + user.getNome() + "#" + user.getPassword());			
+		}
+		System.out.println("Users gravados");
+		out.close();
+	}
+	
+	
+	
+	/**
+	 * Método para carregar todos os users em Users.txt para uma colecção ArrayList
+	 * @return ArrayList<User> com todos os users em User.txt
+	 * @throws FileNotFoundException 
+	 */
+	public ArrayList<User> carregarUsers() throws FileNotFoundException{
+		File file = new File(FICHEIRO_USERS);
+		Scanner in = new Scanner(file);
+		String[] linha;
+		User novoUser = null;
+		
+		while (in.hasNextLine()) {
+			linha = in.nextLine().split("#");
+			novoUser = new User(Integer.parseInt(linha[0]), Integer.parseInt(linha[1]), linha[2], linha[3]);
+			users.add(novoUser);			
+		}
+		in.close();
+		System.out.println("Users carregados");
+		return users;
+	}
+	
+	
+	/**
+	 * Método para criar um novo user, separado para conveniência e porque não tenho melhor que fazer..
+	 * @param nivel Nível de permissões do user.
+	 * @param nome Nome do user.
+	 * @param password Pasword do user.
+	 * @return Um User construído com os parâmetros recebidos.
+	 */
+	public User adicionarUser(String nivel, String nome, String password){
+		User novoUser = new User(users.get(users.size()-1).getId()+1, Integer.parseInt(nivel), nome, password);
+		users.add(novoUser);
+		System.out.println("User adicionado");
+		return novoUser;
+	}
+	
+	
+	/**
+	 * Método para eliminar apenas um User.
+	 * @param nome Nome do user a eliminar.
+	 */
+	public void eliminarUser(String nome){
+		for (User user : users) {
+			if (user.getNome().equals(nome))
+				users.remove(user);
+		}
+		
+		System.out.println("User " + nome + " removido");
+	}
+	
+	
+	/**
+	 * método para mudar o nivel de um dado User.
+	 * @param nome Nome do User a mudar.
+	 * @param nivel Nível com o qual o User deve ficar
+	 * 				// 1-ADMIN 2-GESTOR 3-SECRETARIADO
+	 */
+	public void alterarNivel(String nome, int nivel){
+		for (User user : users) {
+			if (user.getNome().equals(nome))
+				user.setNivel(nivel);
+		}
+	System.out.println("Nível de " + nome + " alterado para " + nivel);
+	}
+	
+	
+	/**Método para alterar a password de um dado User.
+	 * @param nome Nome do User a alterar.
+	 * @param password Password com a qual o user deve ficar.
+	 */
+	public void alterarPassword(String nome, String password){
+		for (User user : users) {
+			if (user.getPassword().equals(nome))
+				user.setPassord(password);
+		}
+	System.out.println("Password de " + nome + " alterada");
+	}
+	
+	
+	/**
+	 * Método para devolver um User pelo nome. Devolve null se não encontrar nada.
+	 * @param nome Nome do usre a devolver.
+	 * @return
+	 */
+	public User getUser(String nome){
+		User login = null;		
+		for (User user : users) {
+			if (user.getNome().equals(nome))
+				login = user;
+		}
+		
+		return login;
+	}
+	
+	
+	//----------------------------------------------------
+}

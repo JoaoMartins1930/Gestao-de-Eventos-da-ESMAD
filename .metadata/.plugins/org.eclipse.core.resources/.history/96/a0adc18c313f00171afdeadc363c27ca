@@ -1,0 +1,99 @@
+package com.horizon.view;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import com.horizon.model.User;
+
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
+
+public class MainFrame extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+
+	private ArrayList<User> users = new ArrayList<User>();
+	
+	
+	public void adicionarUser(String nome, String password) {
+		User novoUser = new User()
+	}
+	
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainFrame frame = new MainFrame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public MainFrame() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		textField = new JTextField();
+		textField.setBounds(66, 8, 86, 20);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblNome = new JLabel("Nome:");
+		lblNome.setBounds(10, 11, 46, 14);
+		contentPane.add(lblNome);
+		
+		JLabel lblPassword = new JLabel("Password:");
+		lblPassword.setBounds(10, 33, 62, 14);
+		contentPane.add(lblPassword);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(66, 30, 86, 20);
+		contentPane.add(textField_1);
+		textField_1.setColumns(10);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				adicionarUser();
+			}
+		});
+		btnNewButton.setBounds(10, 92, 142, 23);
+		contentPane.add(btnNewButton);
+		
+		JSpinner spinner = new JSpinner();
+		spinner.setBounds(89, 61, 62, 20);
+		contentPane.add(spinner);
+		
+		JLabel lblNvel = new JLabel("N\u00EDvel:");
+		lblNvel.setBounds(10, 67, 46, 14);
+		contentPane.add(lblNvel);
+	}
+}
